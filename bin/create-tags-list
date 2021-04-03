@@ -1,0 +1,27 @@
+#!/usr/bin/env zsh
+
+set -eo pipefail
+
+readonly search_path=${${1:-$PWD}:A}
+
+if [[ -f $search_path ]]; then
+	readonly dir=${search_path:h}
+	readonly tags_file="$dir/tags.md"
+	readonly existing=$(command cat $tags_file)
+elif [[ -d $search_path ]]; then
+	readonly dir=$search_path
+	readonly tags_file="$dir/tags.md"
+	readonly existing=
+else
+	echo "No valid directory/file given: ($search_path)"
+	exit 1
+fi
+
+function get_tags() {
+	if [[ -n $existing ]]; then
+		echo $existing
+	fi
+	command rg '#\w+' --only-matching --no-filename --no-line-number $search_path
+}
+
+get_tags | command sort --ignore-case | command uniq > $tags_file
