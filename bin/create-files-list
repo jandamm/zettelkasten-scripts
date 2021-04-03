@@ -1,0 +1,6 @@
+#!/usr/bin/env zsh
+
+readonly search_path=${${1:-$PWD}:A}
+readonly files_file="$search_path/files.md"
+
+command rg --files $search_path | command sort --ignore-case | command uniq > $files_file
