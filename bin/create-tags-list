@@ -7,7 +7,7 @@ readonly search_path=${${1:-$PWD}:A}
 if [[ -f $search_path ]]; then
 	readonly dir=${search_path:h}
 	readonly tags_file="$dir/tags.md"
-	readonly existing=$(command cat $tags_file)
+	readonly existing=$(command cat $tags_file 2>/dev/null)
 elif [[ -d $search_path ]]; then
 	readonly dir=$search_path
 	readonly tags_file="$dir/tags.md"
@@ -21,7 +21,7 @@ function get_tags() {
 	if [[ -n $existing ]]; then
 		echo $existing
 	fi
-	command rg '#\w+' --only-matching --no-filename --no-line-number $search_path
+	command rg '(?:^|\s)(#\w+)' --replace '$1' --only-matching --no-filename --no-line-number $search_path
 }
 
 get_tags | command sort --ignore-case | command uniq > $tags_file
