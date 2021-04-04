@@ -21,7 +21,12 @@ function get_tags() {
 	if [[ -n $existing ]]; then
 		echo $existing
 	fi
+	set +e
 	command rg '(?:^|\s)(#\w+)' --replace '$1' --only-matching --no-filename --no-line-number $search_path
+	set -e
+	if [[ $? -gt 1 ]]; then
+		exit $?
+	fi
 }
 
 get_tags | command sort --ignore-case | command uniq > $tags_file
