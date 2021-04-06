@@ -1,0 +1,20 @@
+#!/usr/bin/env zsh
+
+set -euo pipefail
+
+readonly search="${${1:-$PWD}:A}/"
+
+IFS=$'\n'
+for file in $(rg $search --files --glob '*.md' | rg '[0-9]{12,14} ?\.md$')
+do
+	uid=${${file%.md}#$search}
+	if [[ $#uid -lt 14 ]]; then
+		# trim to 12 chars and append modified seconds
+		uid="${uid:0:12}$(date -r $file '+%S')"
+	fi
+	firstline=$(head -1 "$file")
+	if [[ $firstline =~ '^# ' ]]; then
+		filename="$search$uid ${firstline:2}"
+		mv "$file" "${filename%% }.md"
+	fi
+done
