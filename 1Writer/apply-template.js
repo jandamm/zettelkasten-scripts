@@ -1,9 +1,10 @@
 "use strict";
 
 // Shared code
-function applyTemplate(lines) {
+function applyTemplate(filename, lines) {
+    const uid = filename.replace(/(\d{12,14}) ?.*/, "$1");
     const frontmatter = ["# "];
-    const backmatter = ["---", "tags: ", "source: "];
+    const backmatter = ["---", "uid: [[" + uid + "]]", "tags: ", "source: "];
     function inserted(arr, idx, item) {
         const bef = arr.slice(0, idx);
         const aft = arr.slice(idx, arr.length);
@@ -29,6 +30,7 @@ function applyTemplate(lines) {
 }
 
 // 1Writer specific
-const lines = applyTemplate(editor.getText().split("\n"));
+const filename = editor.getFileName();
+const lines = applyTemplate(filename, editor.getText().split("\n"));
 editor.setText(lines.join("\n"));
-editor.setSelectedRange(2)
+editor.setSelectedRange(lines[0].length)
