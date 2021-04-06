@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-set -eo pipefail
+set -euo pipefail
 
 readonly search_path=${${1:-$PWD}:A}
 
