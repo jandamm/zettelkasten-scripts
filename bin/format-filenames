@@ -9,8 +9,10 @@ for file in $(rg $search --files --glob '*.md' | rg '[0-9]{12,14} ?\.md$')
 do
 	uid=${${file%.md}#$search}
 	if [[ $#uid -lt 14 ]]; then
+		readonly new_uid="${uid:0:12}$(date -r $file '+%S')"
+		/usr/bin/sed -i '' -r "s%uid: \[\[$uid\]\]%uid: [[$new_uid]]%g" $file
 		# trim to 12 chars and append modified seconds
-		uid="${uid:0:12}$(date -r $file '+%S')"
+		uid="$new_uid"
 	fi
 	firstline=$(head -1 "$file")
 	if [[ $firstline =~ '^# ' ]]; then
