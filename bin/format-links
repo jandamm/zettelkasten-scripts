@@ -1,0 +1,13 @@
+#!/usr/bin/env zsh
+
+set -euo pipefail
+
+readonly input=${${1:-$PWD}:A}
+
+readonly regex='\[\[([0-9]{12,14}) ([^]]+)\]\]'
+
+IFS=$'\n'
+for file in $(rg --files-with-matches "$regex" $input)
+do
+	/usr/bin/sed -i '' -r "s% *$regex%[[\1]]: \2 ||%g" $file
+done
