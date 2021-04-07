@@ -1,9 +1,11 @@
 "use strict";
 
 // Shared code
-function applyTemplate(filename, lines) {
+function applyTemplate(file, lines) {
+    const filename = file.replace(".md", "");
     const uid = filename.replace(/(\d{12,14}) ?.*/, "$1");
-    const frontmatter = ["# "];
+    const title = filename.replace(/\d{12,14} ?(.*)/, "$1");
+    const frontmatter = ["# " + title];
     const backmatter = ["---", "uid: [[" + uid + "]]", "tags: ", "source: "];
     function inserted(arr, idx, item) {
         const bef = arr.slice(0, idx);
