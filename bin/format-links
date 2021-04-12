@@ -4,10 +4,10 @@ set -euo pipefail
 
 readonly input=${${1:-$PWD}:A}
 
-readonly regex='\[\[([0-9]{12,14}) ([^]]+)\]\]'
+readonly regex='\[\[([0-9]{12,14}) ([^]]+?)(\.md)?\]\]'
 
 IFS=$'\n'
-for file in $(rg --files-with-matches "$regex" $input)
+for file in $(command rg --files-with-matches --pcre2 "$regex" $input)
 do
-	/usr/bin/sed -i '' -r "s% *$regex%[[\1]]: \2 ||%g" $file
+	perl -pi -e "s% *$regex%[[\1]]: \2 ||%g" $file
 done
