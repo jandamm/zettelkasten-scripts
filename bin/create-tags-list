@@ -29,4 +29,8 @@ function get_tags() {
 	fi
 }
 
-get_tags | command sort --ignore-case | command uniq > $tags_file
+readonly tags=$(get_tags | command sort --ignore-case | command uniq)
+
+if [[ -n $tags ]] && [[ $tags != $(command cat $tags_file 2>/dev/null) ]]; then
+	echo $tags > $tags_file
+fi
