@@ -2,4 +2,4 @@
 
 readonly dir=${1:-$PWD}
 
-command rg --files $dir | sed "s%$dir/%%"
+command rg --files --glob '*.md' $dir | command rg --invert-match '/\.!' | sed "s%$dir/%%"
