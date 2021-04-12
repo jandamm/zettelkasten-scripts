@@ -1,0 +1,27 @@
+#!/usr/bin/env zsh
+
+set -euo pipefail
+
+# Input must exist and has to be a file
+readonly input=$1
+[[ -f $input ]] || exit 1
+
+# UID has to be numeric
+readonly uid=${2:-${${input:t}%% *}}
+[[ $uid =~ '^[0-9]+$' ]] || exit
+
+# First line has to have a Markdown title
+function get_title() {
+	readonly firstline=$(head -1 $input)
+	[[ $firstline =~ '# .*' ]] || exit
+	echo ${${firstline#'# '}% }
+}
+readonly title=${3:-$(get_title)}
+
+readonly regex="\[\[$uid.*?\]\](.* \|\|)?"
+
+IFS=$'\n'
+for file in $(command rg --files-with-matches --pcre2 "$regex" ${input:h} | command rg --invert-match "$uid")
+do
+	perl -pi -e "s% *$regex%[[$uid]]: $title ||%g" $file
+done
