@@ -2,6 +2,11 @@
 
 set -euo pipefail
 
+update_links=false
+if [[ $#@ -ge 2 ]] && [[ $1 = '--update-links' ]]; then
+	update_links=true
+	shift
+fi
 
 readonly search=${${1:-$PWD}:A}
 if [[ -f $search ]]; then
@@ -27,6 +32,10 @@ do
 		filename="${filename%% }.md"
 		if [[ $file != $filename ]]; then
 			mv $file $filename
+
+			if $update_links; then
+				${0:A:h}/update-link-titles $filename $uid $title
+			fi
 		fi
 	fi
 done
